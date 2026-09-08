@@ -22,27 +22,30 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 16
-          cache: npm
-          cache-dependency-path: web/package-lock.json
+
+      - name: Install Yarn
+        run: npm install -g yarn@1.22.22
 
       - name: Install dependencies
         working-directory: web
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
-      - name: Build React UI
+      - name: Build UI
         working-directory: web
-        run: npm run build
+        env:
+          CI: false
+        run: yarn build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload UI
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: web/build
