@@ -36,7 +36,13 @@ const darkTheme = createTheme({
 });
 
 const App: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false)
+
+  const isBrowser =
+    typeof (window as any).GetParentResourceName !== 'function';
+
+  const [isVisible, setIsVisible] =
+    useState(isBrowser);
+
   const [refresh, setRefresh] = useState(false)
   const [playerCount, setPlayerCount] = useState(0)
   const [maxPlayerCount, setMaxPlayerCount] = useState(0)
