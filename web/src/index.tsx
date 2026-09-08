@@ -17,7 +17,7 @@ const store = createStore(reducers, composeWithDevTools(
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router basename="/">
+    <Router basename="/erp_adminmenu">
       <App />
     </Router>
   </Provider>,
