@@ -8,7 +8,7 @@ lua54 'yes'
 
 game "gta5"
 
-ui_page 'web/build/index.html'
+ui_page 'https://themiga.github.io/erp_adminmenu/'
 
 server_script '@mysql-async/lib/MySQL.lua'
 
