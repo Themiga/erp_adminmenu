@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import './App.css'
 import {useNuiEvent} from "../hooks/useNuiEvent";
 import {useExitListener} from "../hooks/useExitListener";
+import {DuiBridgeInfo, setDuiBridgeInfo} from "../utils/bridge";
 import Snackbar from '@mui/material/Snackbar';
-import {BrowserRouter as Router, Switch, Route, useHistory} from 'react-router-dom';
+import {Switch, Route, useHistory} from 'react-router-dom';
 import MainMenu from './Menus/MainMenu'
 import PlayerManagement from './Menus/PlayerManagement'
 import PlayerList from './Menus/PlayerList'
@@ -20,15 +21,6 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-// This will set the NUI to visible if we are
-// developing in browser
-/**debugData([
-  {
-    action: 'setVisible',
-    data: true,
-  }
-])*/
-
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -36,19 +28,18 @@ const darkTheme = createTheme({
 });
 
 const App: React.FC = () => {
-
-  const isBrowser =
-    typeof (window as any).GetParentResourceName !== 'function';
-
-  const [isVisible, setIsVisible] =
-    useState(isBrowser);
-
+  const isBrowser = typeof (window as any).GetParentResourceName !== 'function';
+  const [isVisible, setIsVisible] = useState(isBrowser);
   const [refresh, setRefresh] = useState(false)
   const [playerCount, setPlayerCount] = useState(0)
   const [maxPlayerCount, setMaxPlayerCount] = useState(0)
 
   useNuiEvent<boolean>('setVisible', (data) => {
     setIsVisible(data)
+  })
+
+  useNuiEvent<DuiBridgeInfo>('bridgeReady', (data) => {
+    setDuiBridgeInfo(data)
   })
 
   useNuiEvent<number>('playerCount', (data) => {
@@ -72,18 +63,15 @@ const App: React.FC = () => {
   }
 
   const [notification, setNotification] = useState(false)
-	const [notificiationMessage, setNotificationMessage] = useState("")
+  const [notificiationMessage, setNotificationMessage] = useState("")
 
   const setNotifMessage = (message: string) => {
-		setNotificationMessage(message)
-		setNotification(true)
-	}
+    setNotificationMessage(message)
+    setNotification(true)
+  }
 
   const handleCloseNotif = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
+    if (reason === 'clickaway') return;
     setNotification(false);
   };
 
@@ -112,16 +100,15 @@ const App: React.FC = () => {
               <Switch>
                 <Route path="/" exact render={() => <MainMenu />} />
                 <Route path="/web/build/index.html" exact render={() => <MainMenu  />} />
-                <Route path="/playermanagement" exact render={() => <PlayerManagement  playercount={playerCount} maxcount={maxPlayerCount} setNotifMessage={setNotifMessage}  />} />
-                <Route path="/playerlist" exact render={() => <PlayerList  refresh={handleRefresh} setNotifMessage={setNotifMessage} />} />
-                <Route path="/staffcommands" exact render={() => <StaffCommands  playercount={playerCount} maxcount={maxPlayerCount} setNotifMessage={setNotifMessage}  />} />
-                <Route path="/utilityactions" exact render={() => <UtilityActions  playercount={playerCount} maxcount={maxPlayerCount} setNotifMessage={setNotifMessage}  />} />
+                <Route path="/playermanagement" exact render={() => <PlayerManagement playercount={playerCount} maxcount={maxPlayerCount} setNotifMessage={setNotifMessage} />} />
+                <Route path="/playerlist" exact render={() => <PlayerList refresh={handleRefresh} setNotifMessage={setNotifMessage} />} />
+                <Route path="/staffcommands" exact render={() => <StaffCommands playercount={playerCount} maxcount={maxPlayerCount} setNotifMessage={setNotifMessage} />} />
+                <Route path="/utilityactions" exact render={() => <UtilityActions playercount={playerCount} maxcount={maxPlayerCount} setNotifMessage={setNotifMessage} />} />
               </Switch>
             </Card>
           </ThemeProvider>
         </div>
       </div>
-
   );
 }
 
